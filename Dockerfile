@@ -60,7 +60,7 @@ RUN apt-get update -y && \
           libxrootd-client-dev \
           xrootd-client) \
     fi && \
-    pip install --no-cache-dir --upgrade pip setuptools && \
+    pip install --no-cache-dir --upgrade pip 'setuptools<71' && \
     pip install --no-cache-dir -r /code/requirements.txt && \
     apt-get remove -y \
         cmake \
