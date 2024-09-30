@@ -32,9 +32,6 @@ extras_require = {
     "tests": [
         "pytest-reana>=0.95.0a2,<0.96.0",
     ],
-    "xrootd": [
-        "xrootd==5.6.0",
-    ],
 }
 
 extras_require["all"] = []
@@ -44,7 +41,8 @@ for key, reqs in extras_require.items():
     extras_require["all"].extend(reqs)
 
 install_requires = [
-    "reana-commons[snakemake_reports]>=0.95.0a2,<0.96.0",
+    "reana-commons[snakemake,snakemake-xrootd]>=0.95.0a5,<0.96.0",
+    "pygments>=2.18.0",  # necessary for Snakemake reports
 ]
 
 packages = find_packages()

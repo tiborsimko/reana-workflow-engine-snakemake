@@ -20,7 +20,7 @@ from reana_commons.config import (
 from reana_commons.workflow_engine import create_workflow_engine_command
 
 from reana_workflow_engine_snakemake.config import LOGGING_MODULE
-from reana_workflow_engine_snakemake.executor import run_jobs
+from reana_workflow_engine_snakemake.runner import run_jobs
 
 
 logging.basicConfig(level=REANA_LOG_LEVEL, format=REANA_LOG_FORMAT)
@@ -49,8 +49,6 @@ def run_snakemake_workflow_engine_adapter(
     log.info(f"Workflow spec received: {workflow_file}")
     publisher.publish_workflow_status(workflow_uuid, running_status)
     success = run_jobs(
-        rjc_api_client,
-        publisher,
         workflow_workspace,
         workflow_file,
         workflow_parameters,
