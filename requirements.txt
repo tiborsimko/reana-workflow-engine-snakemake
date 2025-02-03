@@ -4,90 +4,91 @@
 #
 #    pip-compile --annotation-style=line --output-file=requirements.txt setup.py
 #
-amqp==5.2.0               # via kombu
+amqp==5.3.1               # via kombu
 appdirs==1.4.4            # via fs, snakemake
 argparse-dataclass==2.0.0  # via snakemake-interface-common, snakemake-interface-executor-plugins
 arrow==1.3.0              # via isoduration
-attrs==23.2.0             # via jsonschema, referencing
-bracex==2.4               # via wcmatch
+attrs==25.1.0             # via jsonschema, referencing
+bracex==2.5.post1         # via wcmatch
 bravado==10.3.2           # via reana-commons
 bravado-core==6.1.0       # via bravado, reana-commons
-certifi==2024.7.4         # via requests
-charset-normalizer==3.3.2  # via requests
+certifi==2025.1.31        # via requests
+charset-normalizer==3.4.1  # via requests
 checksumdir==1.1.9        # via reana-commons
-click==8.1.7              # via reana-commons
+click==8.1.8              # via reana-commons
 conda-inject==1.3.2       # via snakemake
 configargparse==1.7       # via snakemake, snakemake-interface-common
 connection-pool==0.0.3    # via snakemake
 datrie==0.8.2             # via snakemake
 docutils==0.21.2          # via snakemake
 dpath==2.2.0              # via snakemake, yte
-fastjsonschema==2.20.0    # via nbformat
+fastjsonschema==2.21.1    # via nbformat
 fqdn==1.5.1               # via jsonschema
 fs==2.4.16                # via reana-commons
-gherkin-official==29.0.0  # via reana-commons
-gitdb==4.0.11             # via gitpython
-gitpython==3.1.43         # via snakemake
+gherkin-official==31.0.0  # via reana-commons
+gitdb==4.0.12             # via gitpython
+gitpython==3.1.44         # via snakemake
 humanfriendly==10.0       # via snakemake
-idna==3.7                 # via jsonschema, requests
+idna==3.10                # via jsonschema, requests
 immutables==0.21          # via snakemake
-importlib-resources==6.4.0  # via swagger-spec-validator
+importlib-resources==6.5.2  # via swagger-spec-validator
 isoduration==20.11.0      # via jsonschema
-jinja2==3.1.4             # via snakemake
+jinja2==3.1.5             # via snakemake
 jsonpointer==3.0.0        # via jsonschema
 jsonref==1.1.0            # via bravado-core
 jsonschema[format]==4.23.0  # via bravado-core, nbformat, reana-commons, snakemake, swagger-spec-validator
-jsonschema-specifications==2023.12.1  # via jsonschema
+jsonschema-specifications==2024.10.1  # via jsonschema
 jupyter-core==5.7.2       # via nbformat
-kombu==5.3.7              # via reana-commons
-markupsafe==2.1.5         # via jinja2, werkzeug
+kombu==5.4.2              # via reana-commons
+markupsafe==3.0.2         # via jinja2, werkzeug
 mock==3.0.5               # via reana-commons
 monotonic==1.6            # via bravado
-msgpack==1.0.8            # via bravado-core
+msgpack==1.1.0            # via bravado-core
 msgpack-python==0.5.6     # via bravado
 nbformat==5.10.4          # via snakemake
-packaging==24.1           # via snakemake
+packaging==24.2           # via snakemake
 parse==1.20.2             # via reana-commons
 plac==1.4.3               # via yte
-platformdirs==4.2.2       # via jupyter-core
-psutil==6.0.0             # via snakemake
-pulp==2.7.0               # via snakemake
-pygments==2.18.0          # via reana-workflow-engine-snakemake (setup.py)
+platformdirs==4.3.6       # via jupyter-core
+psutil==6.1.1             # via snakemake
+pulp==2.9.0               # via snakemake
+pygments==2.19.1          # via reana-workflow-engine-snakemake (setup.py)
 python-dateutil==2.9.0.post0  # via arrow, bravado, bravado-core
-pytz==2024.1              # via bravado-core
-pyyaml==6.0.1             # via bravado, bravado-core, conda-inject, reana-commons, snakemake, swagger-spec-validator, yte
-reana-commons[snakemake,snakemake-xrootd]==0.95.0a7	# via reana-workflow-engine-snakemake (setup.py)
-referencing==0.35.1       # via jsonschema, jsonschema-specifications
+pytz==2025.1              # via bravado-core
+pyyaml==6.0.2             # via bravado, bravado-core, conda-inject, reana-commons, snakemake, swagger-spec-validator, yte
+reana-commons[snakemake,snakemake-xrootd]==0.95.0a7  # via reana-workflow-engine-snakemake (setup.py)
+referencing==0.36.2       # via jsonschema, jsonschema-specifications
 requests==2.32.3          # via bravado, bravado-core, snakemake
 reretry==0.11.8           # via snakemake, snakemake-interface-storage-plugins
 rfc3339-validator==0.1.4  # via jsonschema
 rfc3987==1.3.8            # via jsonschema
-rpds-py==0.19.0           # via jsonschema, referencing
-simplejson==3.19.2        # via bravado, bravado-core
-six==1.16.0               # via bravado, bravado-core, fs, mock, python-dateutil, rfc3339-validator
-smart-open==7.0.4         # via snakemake
-smmap==5.0.1              # via gitdb
-snakemake==8.24.1         # via reana-commons
-snakemake-interface-common==1.17.4  # via reana-commons, snakemake, snakemake-interface-executor-plugins, snakemake-interface-report-plugins, snakemake-interface-storage-plugins, snakemake-storage-plugin-xrootd
-snakemake-interface-executor-plugins==9.3.2  # via reana-commons, snakemake
-snakemake-interface-report-plugins==1.1.0  # via reana-commons, snakemake
-snakemake-interface-storage-plugins==3.3.0  # via reana-commons, snakemake, snakemake-storage-plugin-xrootd
+rpds-py==0.22.3           # via jsonschema, referencing
+simplejson==3.19.3        # via bravado, bravado-core
+six==1.17.0               # via bravado, bravado-core, fs, mock, python-dateutil, rfc3339-validator
+smart-open==7.1.0         # via snakemake
+smmap==5.0.2              # via gitdb
+snakemake==8.27.1         # via reana-commons
+snakemake-interface-common==1.17.4  # via snakemake, snakemake-interface-executor-plugins, snakemake-interface-report-plugins, snakemake-interface-storage-plugins, snakemake-storage-plugin-xrootd
+snakemake-interface-executor-plugins==9.3.3  # via snakemake
+snakemake-interface-report-plugins==1.1.0  # via snakemake
+snakemake-interface-storage-plugins==3.3.0  # via snakemake, snakemake-storage-plugin-xrootd
 snakemake-storage-plugin-xrootd==0.1.4  # via reana-commons
 swagger-spec-validator==3.0.4  # via bravado-core
 tabulate==0.9.0           # via snakemake
 throttler==1.2.2          # via snakemake, snakemake-interface-executor-plugins, snakemake-interface-storage-plugins
 traitlets==5.14.3         # via jupyter-core, nbformat
-types-python-dateutil==2.9.0.20240316  # via arrow
-typing-extensions==4.12.2  # via bravado, swagger-spec-validator
+types-python-dateutil==2.9.0.20241206  # via arrow
+typing-extensions==4.12.2  # via bravado, gherkin-official, referencing, swagger-spec-validator
+tzdata==2025.1            # via kombu
 uri-template==1.3.0       # via jsonschema
-urllib3==2.2.2            # via requests
+urllib3==2.3.0            # via requests
 vine==5.1.0               # via amqp, kombu
 wcmatch==8.4.1            # via reana-commons
-webcolors==24.6.0         # via jsonschema
-werkzeug==3.0.3           # via reana-commons
-wrapt==1.16.0             # via smart-open, snakemake, snakemake-interface-storage-plugins
-xrootd==5.7.1             # via snakemake-storage-plugin-xrootd
-yte==1.5.4                # via snakemake
+webcolors==24.11.1        # via jsonschema
+werkzeug==3.1.3           # via reana-commons
+wrapt==1.17.2             # via smart-open, snakemake, snakemake-interface-storage-plugins
+xrootd==5.7.3             # via snakemake-storage-plugin-xrootd
+yte==1.5.6                # via snakemake
 
 # The following packages are considered to be unsafe in a requirements file:
 # setuptools
