@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of REANA.
-# Copyright (C) 2021, 2022, 2023, 2024, 2025 CERN.
+# Copyright (C) 2021, 2022, 2023, 2024, 2025, 2026 CERN.
 #
 # REANA is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
@@ -30,7 +30,7 @@ extras_require = {
         "sphinx-rtd-theme>=0.1.9",
     ],
     "tests": [
-        "pytest-reana>=0.95.0a2,<0.96.0",
+        "pytest-reana>=0.95.0a7,<0.96.0",
     ],
 }
 
@@ -41,7 +41,7 @@ for key, reqs in extras_require.items():
     extras_require["all"].extend(reqs)
 
 install_requires = [
-    "reana-commons[snakemake,snakemake-xrootd]>=0.95.0a12,<0.96.0",
+    "reana-commons[snakemake,snakemake-kubernetes,snakemake-xrootd]>=0.95.0a13,<0.96.0",
     "pygments>=2.18.0",  # necessary for Snakemake reports
 ]
 
