@@ -30,7 +30,8 @@ extras_require = {
         "sphinx-rtd-theme>=0.1.9",
     ],
     "tests": [
-        "pytest-reana>=0.95.0a7,<0.96.0",
+        "pytest>=7.0.0,<9.0.0",
+        "pytest-cov>=3.0.0,<4.0",
     ],
 }
 
@@ -41,7 +42,7 @@ for key, reqs in extras_require.items():
     extras_require["all"].extend(reqs)
 
 install_requires = [
-    "reana-commons[snakemake,snakemake-kubernetes,snakemake-xrootd]>=0.95.0a14,<0.96.0",
+    "reana-commons[snakemake,snakemake-kubernetes,snakemake-xrootd]>=0.95.0a16,<0.96.0",
     "pygments>=2.18.0",  # necessary for Snakemake reports
 ]
 
