@@ -11,14 +11,11 @@
 import os
 import logging
 import re
+from copy import copy
 from pathlib import Path
 
 from snakemake.api import SnakemakeApi
-from snakemake.logging import (
-    DefaultFilter,
-    DefaultFormatter,
-    logger as snakemake_logger,
-)
+from snakemake.logging import logger as snakemake_logger
 from snakemake.settings.types import (
     ConfigSettings,
     DAGSettings,
@@ -36,7 +33,7 @@ from snakemake_interface_report_plugins.settings import (
 )
 from snakemake_interface_common.exceptions import WorkflowError
 
-from reana_commons.config import REANA_LOG_FORMAT
+from reana_commons.config import REANA_LOG_FORMAT, REANA_LOG_LEVEL
 
 from reana_workflow_engine_snakemake.config import (
     LOGGING_MODULE,
@@ -52,21 +49,25 @@ log = logging.getLogger(LOGGING_MODULE)
 class SnakemakeLoggingFormatter(logging.Formatter):
     """Format Snakemake log records for REANA output.
 
-    Delegates to Snakemake's ``DefaultFormatter`` to produce human-readable
+    Delegates to Snakemake's configured formatter to produce human-readable
     message bodies (e.g. PROGRESS → "2 of 5 steps (40%) done"), then wraps
     the result in ``REANA_LOG_FORMAT``.  Records whose formatted body is
-    empty or ``"None"`` are suppressed.
+    empty or ``"None"`` are returned as empty strings, which Snakemake's
+    stream handler suppresses.
     """
 
     _SNAKEMAKE_TIMESTAMP_RE = re.compile(r"^\[.*?\]\n")
 
-    def __init__(self):
+    def __init__(self, snakemake_formatter):
         """Initialise Snakemake formatter with REANA log format."""
         super().__init__(fmt=REANA_LOG_FORMAT)
-        self._snakemake_formatter = DefaultFormatter(quiet=set())
+        self._snakemake_formatter = snakemake_formatter
 
     def format(self, record):
         """Format a log record."""
+        # Other handlers, including Snakemake's file logger, need the original
+        # structured record rather than REANA's rendered message.
+        record = copy(record)
         body = self._snakemake_formatter.format(record)
         if not body or body == "None":
             return ""
@@ -78,37 +79,34 @@ class SnakemakeLoggingFormatter(logging.Formatter):
         return super().format(record)
 
 
-def _setup_snakemake_logging(printshellcmds=True):
-    """Replace Snakemake's default logging handlers with a REANA-friendly one.
+def _setup_snakemake_logging():
+    """Wrap Snakemake's default stream formatter with REANA formatting.
 
     This must be called **after** ``SnakemakeApi(...)`` has been created,
     because the ``SnakemakeApi`` constructor triggers ``LoggerManager`` setup
     which installs Snakemake's default ``ColorizingTextHandler``.
 
-    The function:
-    * sets ``propagate = False`` on the ``snakemake.logging`` logger so that
-      messages no longer bubble up to the root logger (eliminates duplicate
-      and broken ``"None"`` lines);
-    * removes all existing handlers;
-    * adds a single ``StreamHandler`` with ``SnakemakeLoggingFormatter`` and
-      Snakemake's ``DefaultFilter``.
+    Reuse the handler, filter and formatter configured from ``OutputSettings``
+    so their constructor signatures and defaults remain Snakemake's concern.
+    Disable propagation to prevent duplicate root-logger messages. Snakemake
+    may subsequently add its usual workspace log file when creating a workflow.
     """
     snakemake_logger.propagate = False
 
-    for handler in snakemake_logger.handlers[:]:
-        snakemake_logger.removeHandler(handler)
+    for handler in snakemake_logger.handlers:
+        if handler.name == "DefaultStreamHandler" and not isinstance(
+            handler.formatter, SnakemakeLoggingFormatter
+        ):
+            handler.setFormatter(SnakemakeLoggingFormatter(handler.formatter))
 
-    handler = logging.StreamHandler()
-    handler.setFormatter(SnakemakeLoggingFormatter())
-    handler.addFilter(
-        DefaultFilter(
-            quiet=set(),
-            debug_dag=False,
-            dryrun=False,
-            printshellcmds=printshellcmds,
+    if not any(
+        isinstance(handler.formatter, SnakemakeLoggingFormatter)
+        for handler in snakemake_logger.handlers
+    ):
+        log.warning(
+            "Snakemake default stream handler not found; "
+            "falling back to upstream log formatting."
         )
-    )
-    snakemake_logger.addHandler(handler)
 
 
 my_registry = ExecutorPluginRegistry()
@@ -139,13 +137,15 @@ def run_jobs(
 ):
     """Run Snakemake jobs using custom REANA executor."""
     workflow_file_path = os.path.join(workflow_workspace, workflow_file)
-    printshellcmds = True
     with SnakemakeApi(
         OutputSettings(
-            printshellcmds=printshellcmds,
+            printshellcmds=True,
+            nocolor=True,
+            verbose=REANA_LOG_LEVEL <= logging.DEBUG,
+            log_level_override=REANA_LOG_LEVEL,
         )
     ) as snakemake_api:
-        _setup_snakemake_logging(printshellcmds=printshellcmds)
+        _setup_snakemake_logging()
         try:
             workflow_api = snakemake_api.workflow(
                 resource_settings=ResourceSettings(nodes=SNAKEMAKE_MAX_PARALLEL_JOBS),
