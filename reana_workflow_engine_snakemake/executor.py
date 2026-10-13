@@ -9,6 +9,7 @@
 """REANA-Workflow-Engine-Snakemake executor."""
 
 import os
+import sys
 import logging
 from dataclasses import dataclass, field
 from typing import List, Generator, Optional
@@ -268,17 +269,22 @@ class Executor(RemoteExecutor):
         """Override generic executor cancel_jobs method."""
         # Cancel all active jobs.
         # This method is called when Snakemake is interrupted.
+        workflow_uuid = os.getenv("workflow_uuid", "default")
+        logs = "Snakemake is interrupted and all jobs are cancelled."
+        # Snakemake 9.27.0 calls cancel() from the `except Exception` block
+        # of JobScheduler.schedule(), before it re-raises the error that
+        # stopped the workflow. Report that error, otherwise the user cannot
+        # see it.
+        error = sys.exc_info()[1]
+        if isinstance(error, Exception):
+            log.error(logs, exc_info=True)
+            logs = f"{logs}\n{type(error).__name__}: {error}"
 
         for active_job in active_jobs:
-            job_id = active_job.external_jobid
+            self._delete_job_from_controller(active_job)
 
-            self.rjc_api_client.delete_job(job_id)
-
-        workflow_uuid = os.getenv("workflow_uuid", "default")
         self.publisher.publish_workflow_status(
-            workflow_uuid,
-            RunStatus.failed,
-            message="Snakemake is interrupted and all jobs are cancelled",
+            workflow_uuid, RunStatus.failed.value, logs=logs
         )
 
     @staticmethod
@@ -353,6 +359,18 @@ class Executor(RemoteExecutor):
                 f"Response: {response}"
             )
             return JobStatus.failed.name
+
+    def _delete_job_from_controller(self, active_job: SubmittedJobInfo):
+        """Delete a job in job-controller, and log an error if it fails."""
+        job_id = active_job.external_jobid
+        params = {"job_id": job_id}
+        compute_backend = active_job.job.resources.get("compute_backend")
+        if compute_backend:
+            params["compute_backend"] = compute_backend
+        try:
+            self.rjc_api_client._client.jobs.delete_job(**params).result()
+        except Exception as exception:
+            log.error(f"Error deleting job with id {job_id}. Details: {exception}")
 
     def _rjc_submit(self, rjc_api_client, job_request_body):
         """Submit a job to REANA Job Controller."""
